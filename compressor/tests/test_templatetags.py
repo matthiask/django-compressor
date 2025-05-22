@@ -113,7 +113,7 @@ class TemplatetagTestCase(TestCase):
         """
         out = '<script src="/static/CACHE/js/output.06a98ccfd380.js"></script>'
         self.assertEqual(out, render(template, self.context))
-        
+
     def test_js_module_and_importmap_tag(self):
         template = """{% load compress %}{% compress js %}
         <script type="importmap">
@@ -140,27 +140,27 @@ class TemplatetagTestCase(TestCase):
         # 1. Import map and module scripts to be kept as-is without compression
         # 2. Regular scripts to be compressed
         rendered = render(template, self.context)
-        
+
         # Verify import map is preserved exactly as-is
         self.assertTrue('<script type="importmap">' in rendered)
         self.assertTrue('"imports"' in rendered)
         self.assertTrue('"example": "./module.js"' in rendered)
-        
+
         # Verify module scripts are preserved exactly as-is
         self.assertTrue('<script type="module">' in rendered)
         self.assertTrue('import { example } from \'./module.js\';' in rendered)
         self.assertTrue('console.log(example);' in rendered)
         self.assertTrue('<script type="module" src="/static/js/one.js">' in rendered)
-        
+
         # Verify regular scripts are compressed
         self.assertTrue('<script src="/static/CACHE/js/' in rendered)
-        
+
         # Verify we have exactly 4 script tags:
         # - 1 importmap script
         # - 2 uncompressed module scripts
         # - 1 compressed regular script
         self.assertEqual(rendered.count('</script>'), 4)
-        
+
         # Verify correct order (first importmap, then inline module, then src module, then compressed regular)
         script_positions = [
             rendered.find('<script type="importmap">'),
